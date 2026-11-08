@@ -1,0 +1,1409 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#06040E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.jpg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>CONSELHO — Classes Narrativas</title>
+<style>
+/* ===================== base ===================== */
+:root{
+  --void:#06040E; --deep:#0E0A1E; --glass:rgba(30,22,58,.60); --glass-hi:rgba(44,32,80,.74);
+  --edge:rgba(255,206,122,.28); --ouro:#FFCE7A; --ouro-forte:#FFB03A; --gelo:#EDE6FF;
+  --mute:#8C7FA8; --ok:#7CE8B0; --ruim:#FF6B7A; --estrela:#FFF4D8;
+  --fonte:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--void); color:var(--gelo); font-family:var(--fonte);
+  font-size:15px; line-height:1.55; overflow-x:hidden;
+  padding:0 16px calc(76px + env(safe-area-inset-bottom)) 16px;
+  min-height:100vh;
+}
+#fundo{position:fixed;inset:0;z-index:-2;
+  background:radial-gradient(130% 90% at 50% -10%,#2A1B52 0%,#120B28 46%,#06040E 100%)}
+#estrelas{position:fixed;inset:0;z-index:-1;opacity:.5;pointer-events:none;
+  background-image:
+    radial-gradient(1.4px 1.4px at 12% 18%,#FFF4D8,transparent),
+    radial-gradient(1.2px 1.2px at 78% 12%,#FFCE7A,transparent),
+    radial-gradient(1.6px 1.6px at 34% 62%,#FFF4D8,transparent),
+    radial-gradient(1.1px 1.1px at 88% 48%,#E0D0FF,transparent),
+    radial-gradient(1.3px 1.3px at 22% 86%,#FFF4D8,transparent),
+    radial-gradient(1.2px 1.2px at 62% 78%,#FFCE7A,transparent),
+    radial-gradient(1px 1px at 48% 32%,#FFF4D8,transparent),
+    radial-gradient(1.4px 1.4px at 92% 88%,#E0D0FF,transparent);
+  animation:cintila 6s ease-in-out infinite}
+@keyframes cintila{0%,100%{opacity:.38}50%{opacity:.62}}
+
+h1,h2,h3{margin:0;font-weight:700}
+h2.title{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--ouro);
+  margin:22px 0 9px;position:relative;padding-bottom:7px}
+h2.title::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;
+  background:linear-gradient(90deg,var(--ouro),rgba(255,206,122,.18),transparent)}
+
+.painel{position:relative;border:1px solid var(--edge);border-radius:12px;padding:14px;
+  background:linear-gradient(160deg,var(--glass-hi),var(--glass));
+  box-shadow:inset 0 1px 0 rgba(255,244,216,.08), 0 2px 18px rgba(0,0,0,.35)}
+.painel::before,.painel::after{content:'';position:absolute;width:11px;height:11px;
+  border-color:var(--ouro);box-shadow:0 0 7px rgba(255,206,122,.6)}
+.painel::before{top:-1px;left:-1px;border-top:2px solid;border-left:2px solid;border-radius:12px 0 0 0}
+.painel::after{bottom:-1px;right:-1px;border-bottom:2px solid;border-right:2px solid;border-radius:0 0 12px 0}
+.painel + .painel{margin-top:10px}
+
+.lbl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.num{font-variant-numeric:tabular-nums;font-weight:700}
+.tag{display:inline-block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid currentColor;border-radius:99px;padding:1px 8px}
+
+.btn{display:block;width:100%;padding:12px;border-radius:10px;font-size:14px;font-family:inherit;
+  border:1px solid var(--edge);background:rgba(255,206,122,.07);color:var(--ouro);cursor:pointer;
+  transition:transform .12s ease, filter .12s ease}
+.btn:active{transform:scale(.985);filter:brightness(1.15)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.solid{background:linear-gradient(135deg,var(--ouro-forte),var(--ouro));color:#1A0F04;
+  border-color:transparent;font-weight:700;box-shadow:0 0 18px rgba(255,176,58,.35)}
+.btn.fantasma{background:transparent;color:var(--mute);border-color:rgba(140,127,168,.3)}
+.btn.ruim{background:rgba(255,107,122,.12);color:var(--ruim);border-color:rgba(255,107,122,.3)}
+.btn.mini{padding:7px 10px;font-size:12px;width:auto;display:inline-block}
+.linha2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.linha3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+input,textarea,select{width:100%;padding:11px;border-radius:9px;font-size:15px;font-family:inherit;
+  background:rgba(8,5,18,.7);border:1px solid rgba(140,127,168,.3);color:var(--gelo)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--ouro)}
+textarea{min-height:76px;resize:vertical}
+label.campo{display:block;margin-bottom:10px}
+label.campo > span{display:block;margin-bottom:5px}
+
+/* barra */
+.barra{height:7px;border-radius:99px;background:rgba(255,206,122,.12);overflow:hidden}
+.barra > i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--ouro-forte),var(--ouro),var(--estrela));
+  box-shadow:0 0 12px rgba(255,206,122,.5);transition:width .7s cubic-bezier(.22,.9,.24,1)}
+
+/* cabeçalho */
+#topo{position:sticky;top:0;z-index:40;margin:0 -16px 4px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background:linear-gradient(180deg,rgba(6,4,14,.96) 62%,rgba(6,4,14,0));
+  display:flex;align-items:center;gap:11px}
+#selo{width:46px;height:46px;flex:0 0 46px;border-radius:12px;border:1.5px solid var(--ouro);
+  display:flex;align-items:center;justify-content:center;font-size:22px;position:relative;
+  background:rgba(255,206,122,.07);box-shadow:0 0 20px rgba(255,206,122,.3);overflow:hidden}
+#selo img,#selo svg{width:100%;height:100%;object-fit:contain}
+#aura{position:absolute;inset:-40%;z-index:-1;border-radius:50%;opacity:.55;
+  background:radial-gradient(circle,rgba(255,206,122,.5) 0%,transparent 68%);
+  animation:respira 3.4s ease-in-out infinite}
+@keyframes respira{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.22);opacity:.7}}
+#topoTxt{flex:1;min-width:0}
+#topoNome{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#topoSub{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#topoXp{margin-top:5px}
+
+/* abas */
+#abas{position:fixed;left:0;right:0;bottom:0;z-index:50;display:grid;grid-template-columns:repeat(5,1fr);
+  background:rgba(10,6,22,.96);border-top:1px solid var(--edge);
+  padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(8px)}
+#abas button{background:none;border:0;padding:10px 2px 11px;color:var(--mute);font-family:inherit;
+  font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;position:relative}
+#abas button .ic{display:block;font-size:17px;margin-bottom:2px;line-height:1}
+#abas button.on{color:var(--ouro)}
+#abas button.on::before{content:'';position:absolute;top:0;left:22%;right:22%;height:2px;
+  background:var(--ouro);box-shadow:0 0 9px var(--ouro)}
+#abas button .ponto{position:absolute;top:7px;right:calc(50% - 17px);width:7px;height:7px;
+  border-radius:50%;background:var(--ok);box-shadow:0 0 7px currentColor}
+
+/* itens */
+.item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+  border-bottom:1px solid rgba(140,127,168,.14)}
+.item:last-child{border-bottom:0}
+.item .corpo{flex:1;min-width:0}
+.item .corpo strong{display:block;font-size:14px;font-weight:600}
+.item .sub{font-size:11px;color:var(--mute);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.check{width:23px;height:23px;flex:0 0 23px;border-radius:7px;border:1.5px solid rgba(140,127,168,.45);
+  display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;margin-top:1px}
+.check.feito{background:var(--ok);border-color:var(--ok);color:#06180F}
+.vazio{text-align:center;color:var(--mute);font-size:13px;padding:18px 6px;line-height:1.7}
+
+/* fala do sistema */
+.fala{border-left:2px solid var(--ouro);padding:2px 0 2px 12px;margin:10px 0;
+  font-style:italic;color:var(--estrela);font-size:13.5px;line-height:1.75}
+
+/* folha */
+#sobreposicao{position:fixed;inset:0;z-index:90;background:rgba(3,2,8,.76);
+  display:none;align-items:flex-end;backdrop-filter:blur(3px)}
+#sobreposicao.on{display:flex}
+.folha{position:relative;width:100%;max-height:88vh;overflow:auto;border-radius:16px 16px 0 0;
+  border:1px solid var(--edge);border-bottom:0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,var(--glass-hi),rgba(10,6,22,.98));
+  animation:sobe .26s cubic-bezier(.2,.9,.3,1)}
+@keyframes sobe{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
+.folha h3{font-size:16px;margin-bottom:12px;color:var(--ouro)}
+
+/* aviso */
+#aviso{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;
+  padding:22px;background:rgba(3,2,8,.82);backdrop-filter:blur(4px)}
+#aviso.on{display:flex}
+#aviso .cx{max-width:420px;width:100%;border:1.5px solid var(--ouro);border-radius:14px;padding:20px;
+  background:linear-gradient(180deg,rgba(32,22,62,.98),rgba(10,6,22,.98));
+  box-shadow:0 0 56px rgba(255,176,58,.3), inset 0 0 34px rgba(255,206,122,.06)}
+#aviso .cb{font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--ouro);margin-bottom:8px}
+#aviso .tt{font-size:19px;font-weight:700;margin-bottom:10px}
+#aviso .tx{font-size:14px;line-height:1.75;white-space:pre-wrap;margin-bottom:16px}
+#aviso.mau .cx{border-color:var(--ruim);box-shadow:0 0 56px rgba(255,107,122,.3)}
+#aviso.mau .cb{color:var(--ruim)}
+
+/* toast */
+#toasts{position:fixed;left:0;right:0;bottom:calc(74px + env(safe-area-inset-bottom));z-index:93;
+  display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;padding:0 16px}
+.toast{background:rgba(14,9,28,.97);border:1px solid var(--edge);border-radius:99px;
+  padding:8px 16px;font-size:13px;animation:pisca .3s ease}
+.toast.bom{border-color:var(--ok);color:var(--ok)}
+.toast.mau{border-color:var(--ruim);color:var(--ruim)}
+@keyframes pisca{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ===================== capa ===================== */
+#capa{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  background:radial-gradient(120% 80% at 50% 30%,#2A1B52 0%,#120B28 52%,#06040E 100%);
+  transition:opacity .5s ease, visibility .5s;
+  /* PARAQUEDAS: a capa sai sozinha aos 7s mesmo se o JS morrer. Lição da 3.8.1 do
+     Sistema — lá uma linha quebrada trancou o app inteiro por semanas. */
+  animation:capaSocorro .45s linear 7s forwards}
+@keyframes capaSocorro{to{opacity:0;visibility:hidden;pointer-events:none}}
+#capa.sai{opacity:0;visibility:hidden;pointer-events:none;animation:none}
+#capa .anel{width:92px;height:92px;border-radius:50%;border:2px solid var(--ouro);
+  border-top-color:transparent;animation:gira 1.3s linear infinite;
+  box-shadow:0 0 30px rgba(255,206,122,.35)}
+@keyframes gira{to{transform:rotate(360deg)}}
+#capa .mk{font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--ouro)}
+#capa .sb{font-size:11px;color:var(--mute)}
+
+@media (prefers-reduced-motion:reduce){
+  #estrelas,#aura,#capa .anel{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="fundo"></div>
+<div id="estrelas"></div>
+
+<div id="capa">
+  <div class="anel"></div>
+  <div class="mk">Conselho</div>
+  <div class="sb">abrindo o cenário…</div>
+</div>
+
+<header id="topo" hidden>
+  <div id="selo"><span id="aura"></span><span id="seloIc">★</span></div>
+  <div id="topoTxt">
+    <div id="topoNome">—</div>
+    <div id="topoSub">—</div>
+    <div id="topoXp" class="barra"><i style="width:0"></i></div>
+  </div>
+</header>
+
+<main id="tela"></main>
+
+<nav id="abas" hidden>
+  <button data-aba="perfil"><span class="ic">★</span>Perfil</button>
+  <button data-aba="conselho"><span class="ic">◈</span>Conselho</button>
+  <button data-aba="obras"><span class="ic">▣</span>Obras</button>
+  <button data-aba="metas"><span class="ic">◆</span>Metas</button>
+  <button data-aba="registro"><span class="ic">≡</span>Registro</button>
+</nav>
+
+<div id="sobreposicao"></div>
+<div id="aviso"><div class="cx">
+  <div class="cb" id="avCb">Sistema</div>
+  <div class="tt" id="avTt"></div>
+  <div class="tx" id="avTx"></div>
+  <button class="btn solid" id="avOk">Entendido</button>
+</div></div>
+<div id="toasts"></div>
+
+<script>
+'use strict';
+const VERSAO = '1.0.0';
+const CHAVE  = 'conselho:v1';
+
+/* =====================================================================
+   AS QUATRO CONSTELAÇÕES
+   Cada um tem a classe do próprio personagem. Não há escolha, não há
+   troca: a senha diz quem você é e isso não muda mais.
+   ===================================================================== */
+const PESSOAS = {
+  dokja: {
+    nome:'Kim Dokja', real:'Arthur', constelacao:'O Sonho Mais Antigo',
+    senha:'sonhomaisantigo', cor:'#FFCE7A', icone:'★', tema:'leitor',
+    classe:'O Leitor', obra:'Omniscient Reader’s Viewpoint',
+    lema:'Leu a história até o fim antes de ela começar.',
+    /* Mecânica: ele sabe o que vem. Pode marcar uma meta futura e já receber
+       parte do XP — mas se não cumprir, a cobrança é dobrada. */
+    poder:{ id:'ler-adiante', n:'Ler Adiante',
+      d:'Antecipe uma meta e receba 40% do XP agora. Se o prazo passar sem cumprir, perde o dobro.' },
+    rota:[
+      {n:'Leitor Constante',          xp:0,    b:'+10% XP em obra concluída'},
+      {n:'Olho do Leitor Onisciente', xp:600,  b:'+20% XP · vê a nota dos outros antes de assistir'},
+      {n:'A Quarta Parede',           xp:1800, b:'+25% XP · penalidade reduzida em 40%'},
+      {n:'Encenador de Lendas',       xp:4200, b:'+35% XP · Ler Adiante custa metade'},
+      {n:'O Sonho Mais Antigo',       xp:9000, b:'+50% XP · nenhuma penalidade tira seu rank'}
+    ]
+  },
+  zoro: {
+    nome:'Roronoa Zoro', real:'Yago', constelacao:'A Lâmina que Não Recua',
+    senha:'santoryu', cor:'#7CE8B0', icone:'⚔', tema:'espada',
+    classe:'O Espadachim', obra:'One Piece',
+    lema:'Não perdeu. O caminho é que estava errado.',
+    /* Mecânica: sequência. Quanto mais dias seguidos, maior o multiplicador.
+       E uma vez por semana ele simplesmente ignora um golpe. */
+    poder:{ id:'nada-aconteceu', n:'Nada Aconteceu',
+      d:'Uma vez por semana, absorve uma penalidade inteira sem perder a sequência.' },
+    rota:[
+      {n:'Espadachim Errante',        xp:0,    b:'+4% XP por dia de sequência (até +40%)'},
+      {n:'Santoryu',                  xp:600,  b:'+6% por dia (até +60%) · três metas no mesmo dia rendem bônus'},
+      {n:'Ashura',                    xp:1800, b:'+8% por dia (até +80%)'},
+      {n:'Rei do Inferno',            xp:4200, b:'+10% por dia (até +100%) · Nada Aconteceu duas vezes por semana'},
+      {n:'O Maior Espadachim do Mundo',xp:9000,b:'+12% por dia (até +120%) · sequência nunca zera, só recua'}
+    ]
+  },
+  takaba: {
+    nome:'Fumihiko Takaba', real:'Vinícius', constelacao:'A Piada que Virou Verdade',
+    senha:'comedia', cor:'#FF78DC', icone:'✦', tema:'palco',
+    classe:'O Comediante', obra:'Jujutsu Kaisen',
+    lema:'Se ele achar graça, vira real. É esse o problema.',
+    /* Mecânica: caos. Toda tarefa tem chance de "virar piada" e render muito
+       mais. E ele pode transformar uma penalidade em XP se achar graça nela. */
+    poder:{ id:'isso-foi-engracado', n:'Isso Foi Engraçado',
+      d:'Escreva uma piada sobre uma penalidade que levou e ela vira XP em vez de perda.' },
+    rota:[
+      {n:'Comediante de Palco',       xp:0,    b:'15% de chance de dobrar o XP de uma tarefa'},
+      {n:'Improviso',                 xp:600,  b:'22% de chance · pode triplicar'},
+      {n:'A Piada Vira Real',         xp:1800, b:'30% de chance · Isso Foi Engraçado devolve XP em dobro'},
+      {n:'Comédia Absoluta',          xp:4200, b:'40% de chance · a piada também cancela a penalidade dos outros'},
+      {n:'O Riso que Desfaz o Mundo', xp:9000, b:'50% de chance · nada que te acontece é sério'}
+    ]
+  },
+  ekko: {
+    nome:'Ekko', real:'Gustavo', constelacao:'O Menino que Partiu o Tempo',
+    senha:'zdrive', cor:'#5FE8E0', icone:'◷', tema:'zaun',
+    classe:'O Inventor', obra:'Arcane',
+    lema:'Errou. Volta. Erra melhor.',
+    /* Mecânica: segunda chance. Ele acumula cargas ao cumprir metas e gasta
+       pra desfazer um dia perdido. O único que consegue voltar atrás. */
+    poder:{ id:'z-drive', n:'Z-Drive',
+      d:'Gaste uma carga para rebobinar um dia perdido: a penalidade some e a sequência volta.' },
+    rota:[
+      {n:'Inventor de Zaun',          xp:0,    b:'1 carga a cada 5 metas cumpridas · guarda até 2'},
+      {n:'Firelight',                 xp:600,  b:'1 carga a cada 4 metas · guarda até 3'},
+      {n:'Z-Drive',                   xp:1800, b:'1 carga a cada 3 metas · guarda até 4 · rebobina 2 dias'},
+      {n:'Hora Zero',                 xp:4200, b:'1 carga a cada 2 metas · guarda até 5'},
+      {n:'O Menino que Partiu o Tempo',xp:9000,b:'1 carga por meta · guarda até 6 · rebobina a semana'}
+    ]
+  }
+};
+
+/* Ranks do Fluxo de Estrelas. Sobe por XP total acumulado. */
+const RANKS = [
+  {n:'Leitor',              xp:0,     cor:'#8C7FA8'},
+  {n:'Encenador',           xp:900,   cor:'#9FD8FF'},
+  {n:'Constelação',         xp:2400,  cor:'#7CE8B0'},
+  {n:'Grande Constelação',  xp:5200,  cor:'#FFCE7A'},
+  {n:'Constelação de Mito', xp:9800,  cor:'#FF9AE8'},
+  {n:'Divindade Suprema',   xp:17000, cor:'#FF6B7A'},
+  {n:'Transcendente',       xp:28000, cor:'#FFF4D8'}
+];
+
+/* Temas — um por pessoa, aplicados automaticamente ao entrar. */
+const TEMAS = {
+  leitor:{
+    vars:{'--void':'#06040E','--deep':'#0E0A1E','--glass':'rgba(30,22,58,.60)',
+      '--glass-hi':'rgba(44,32,80,.74)','--edge':'rgba(255,206,122,.30)',
+      '--ouro':'#FFCE7A','--ouro-forte':'#FFB03A','--gelo':'#EDE6FF','--mute':'#8C7FA8'},
+    fundo:'radial-gradient(130% 90% at 50% -10%,#2A1B52 0%,#120B28 46%,#06040E 100%)',
+    css:`h2.title{letter-spacing:.3em}
+         .fala{border-left-width:3px}
+         .painel{background:linear-gradient(160deg,rgba(48,34,88,.72),rgba(18,12,36,.76))}`
+  },
+  espada:{
+    vars:{'--void':'#040A08','--deep':'#0A1A14','--glass':'rgba(16,44,34,.62)',
+      '--glass-hi':'rgba(24,62,46,.76)','--edge':'rgba(124,232,176,.30)',
+      '--ouro':'#7CE8B0','--ouro-forte':'#3FBF86','--gelo':'#E2FFF2','--mute':'#6E9686'},
+    fundo:'radial-gradient(130% 90% at 50% 108%,#15563C 0%,#0A2419 44%,#040A08 100%)',
+    css:`h2.title{letter-spacing:.2em}
+         /* aço: cantos retos, nada de curva */
+         .painel{border-radius:3px}
+         .painel::before,.painel::after{border-radius:0}
+         .btn{border-radius:3px}
+         .barra,.barra>i{border-radius:0}
+         .check{border-radius:3px}`
+  },
+  palco:{
+    vars:{'--void':'#0C040F','--deep':'#1E0A24','--glass':'rgba(58,16,70,.62)',
+      '--glass-hi':'rgba(82,22,98,.76)','--edge':'rgba(255,120,220,.32)',
+      '--ouro':'#FF78DC','--ouro-forte':'#C43AA8','--gelo':'#FFE8FA','--mute':'#A074A8'},
+    fundo:'radial-gradient(130% 92% at 50% -6%,#6E1A7A 0%,#2A0C33 44%,#0C040F 100%)',
+    css:`h2.title{letter-spacing:.24em}
+         .painel{border-radius:18px}
+         .btn{border-radius:14px}
+         .painel::before{border-color:#FFE066}
+         .painel::after{border-color:#6BE3FF}
+         /* luz de palco varrendo o rodapé */
+         #abas{box-shadow:0 -14px 34px rgba(255,120,220,.16)}`
+  },
+  zaun:{
+    vars:{'--void':'#04100E','--deep':'#082420','--glass':'rgba(12,54,48,.62)',
+      '--glass-hi':'rgba(16,74,66,.76)','--edge':'rgba(95,232,224,.30)',
+      '--ouro':'#5FE8E0','--ouro-forte':'#2BB8B0','--gelo':'#DFFFFB','--mute':'#6B9690'},
+    fundo:'radial-gradient(130% 90% at 50% 104%,#0E6A60 0%,#06302C 44%,#04100E 100%)',
+    css:`h2.title{letter-spacing:.22em}
+         .painel::before{border-color:#FFB03A}
+         .painel::after{border-color:#5FE8E0}
+         /* hextech: o brilho pulsa como um núcleo ligado */
+         .barra>i{animation:pulsaZ 2.4s ease-in-out infinite}
+         @keyframes pulsaZ{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4)}}`
+  }
+};
+
+/* Falas do Sistema, na voz que o Arthur já escreve no grupo. */
+const FALAS = {
+  entrou: p => `「A constelação '${p.constelacao}' tomou assento no conselho.\n\n`
+    + `${p.lema}\n\nQue sua história seja digna de ser acompanhada.」`,
+  subiuRota: (p,e) => `「A constelação '${p.constelacao}' avançou em sua rota.\n\n`
+    + `Novo estágio: ${e.n}.\n${e.b}\n\nO Fluxo de Estrelas registra o avanço.」`,
+  subiuRank: r => `「O Fluxo de Estrelas reconhece um novo patamar.\n\n`
+    + `Você agora é ${r.n}.\n\nPoucos chegam até aqui. Menos ainda seguem adiante.」`,
+  indicou: (de,para,t) => `「'${de}' indica uma obra a '${para}'.\n\n${t}\n\n`
+    + `A troca aguarda contrapartida. Até as histórias merecem ser compartilhadas.」`,
+  recusou: (quem,t,j) => `「'${quem}' recusa a obra indicada.\n\nObra: ${t}\nJustificativa: ${j}\n\n`
+    + `O conselho registra a recusa. Uma justificativa honesta não é uma falha.」`,
+  concluiu: (quem,t) => `「'${quem}' concluiu a obra indicada.\n\n${t}\n\n`
+    + `A experiência foi trocada. O conselho avança junto.」`,
+  penalidade: n => `「O Fluxo de Estrelas cobra o que foi prometido.\n\n`
+    + `${n} ${n===1?'meta venceu':'metas venceram'} sem cumprimento.\n\n`
+    + `De nada adianta possuir um potencial extraordinário se não houver determinação para desenvolvê-lo.」`,
+  vazio: `「A constelação 'O Sonho Mais Antigo' observa as pequenas constelações `
+    + `e aguarda suas manifestações.」`
+};
+
+/* =====================================================================
+   ESTADO
+   Camada de dados separada de propósito: hoje grava no aparelho, e trocar
+   por um servidor depois é mexer só aqui dentro.
+   ===================================================================== */
+const inicial = () => ({
+  quem:null, entrou:null,
+  xp:0, xpTotal:0, rota:0,
+  metas:[], obras:[], registro:[],
+  sequencia:0, ultimoDia:null, melhorSequencia:0,
+  cargas:0, metasDesdeCarga:0, absorveuEm:null,
+  antecipadas:[], penalidades:0,
+  perfis:{},            // o que este aparelho sabe dos outros (via código de troca)
+  versao:VERSAO
+});
+let state = inicial();
+
+const Guardar = {
+  ler(){
+    try{
+      const cru = localStorage.getItem(CHAVE);
+      if(!cru) return null;
+      const d = JSON.parse(cru);
+      /* array tambem e typeof 'object': sem este teste, [1,2,3] virava save */
+      return (d && typeof d === 'object' && !Array.isArray(d)) ? d : null;
+    }catch(e){ return null; }
+  },
+  gravar(){
+    try{ localStorage.setItem(CHAVE, JSON.stringify(state)); return true; }
+    catch(e){ return false; }
+  }
+};
+const salvar = () => Guardar.gravar();
+
+/* ---------- utilidades ---------- */
+const esc = t => String(t==null?'':t).replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hoje = () => { const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const diasEntre = (a,b) => Math.round((new Date(b)-new Date(a))/86400000);
+const id = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const limpo = t => String(t||'').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s/g,'');
+
+const EU   = () => state.quem ? PESSOAS[state.quem] : null;
+const ROTA = () => { const p = EU(); return p ? p.rota[Math.min(state.rota, p.rota.length-1)] : null; };
+const RANK = () => { let r = RANKS[0]; for(const x of RANKS) if(state.xpTotal >= x.xp) r = x; return r; };
+const proxRank = () => RANKS.find(r => r.xp > state.xpTotal) || null;
+const proxRota = () => { const p = EU(); return p ? p.rota[state.rota+1] || null : null; };
+const outros = () => Object.keys(PESSOAS).filter(k => k !== state.quem);
+
+/* multiplicador de XP — é aqui que as quatro classes deixam de ser cosmética */
+function multiplicador(){
+  const p = EU(); if(!p) return 1;
+  const i = Math.min(state.rota, p.rota.length-1);
+  if(state.quem === 'dokja')  return 1 + [0.10,0.20,0.25,0.35,0.50][i];
+  if(state.quem === 'zoro'){
+    const porDia = [0.04,0.06,0.08,0.10,0.12][i], teto = [0.40,0.60,0.80,1.00,1.20][i];
+    return 1 + Math.min(state.sequencia * porDia, teto);
+  }
+  return 1;   // takaba é sorte (aplicada no ganho), ekko é carga (aplicada à parte)
+}
+const chanceDePiada = () => state.quem === 'takaba'
+  ? [0.15,0.22,0.30,0.40,0.50][Math.min(state.rota,4)] : 0;
+const tetoCargas = () => state.quem === 'ekko'
+  ? [2,3,4,5,6][Math.min(state.rota,4)] : 0;
+const metasPorCarga = () => state.quem === 'ekko'
+  ? [5,4,3,2,1][Math.min(state.rota,4)] : 99;
+const reducaoPena = () => state.quem === 'dokja' && state.rota >= 2 ? 0.4 : 0;
+
+/* ---------- ganhar XP ---------- */
+function ganhar(base, motivo){
+  let v = Math.round(base * multiplicador());
+  let piada = false;
+  if(chanceDePiada() && Math.random() < chanceDePiada()){
+    const vezes = state.rota >= 1 && Math.random() < 0.3 ? 3 : 2;
+    v *= vezes; piada = true;
+  }
+  state.xp += v; state.xpTotal += v;
+  anotar(`${motivo} · +${v} XP${piada?' (virou piada)':''}`, 'bom');
+  if(piada) toast(`A piada pegou: +${v} XP`, 'bom');
+  checarAvanco();
+  return v;
+}
+function perder(base, motivo){
+  const v = Math.round(base * (1 - reducaoPena()));
+  state.xp = Math.max(0, state.xp - v);
+  state.xpTotal = Math.max(0, state.xpTotal - v);
+  anotar(`${motivo} · −${v} XP`, 'mau');
+  return v;
+}
+function checarAvanco(){
+  const p = EU(); if(!p) return;
+  const prox = p.rota[state.rota+1];
+  if(prox && state.xpTotal >= prox.xp){
+    state.rota++;
+    avisar('Rota', FALAS.subiuRota(p, prox));
+    anotar(`Avançou para ${prox.n}`, 'bom');
+  }
+  const antes = state.rankVisto || RANKS[0].n, agora = RANK().n;
+  if(antes !== agora){
+    state.rankVisto = agora;
+    if(RANKS.findIndex(r=>r.n===agora) > RANKS.findIndex(r=>r.n===antes))
+      avisar('Fluxo de Estrelas', FALAS.subiuRank(RANK()));
+  }
+}
+function anotar(txt, tipo){
+  state.registro.unshift({t:txt, tipo:tipo||'', q:Date.now()});
+  if(state.registro.length > 220) state.registro.length = 220;
+}
+
+/* ---------- virada do dia: sequência e penalidade ---------- */
+function virarDia(){
+  const d = hoje();
+  if(state.ultimoDia === d) return;
+  const anterior = state.ultimoDia;
+  state.ultimoDia = d;
+
+  /* metas vencidas viram penalidade */
+  let protegido = false;   // Nada Aconteceu também segura a sequência, não só o XP
+  const vencidas = state.metas.filter(m => !m.feito && m.prazo && m.prazo < d);
+  if(vencidas.length){
+    let n = vencidas.length;
+    const podeAbsorver = state.quem === 'zoro'
+      && (!state.absorveuEm || diasEntre(state.absorveuEm, d) >= 7);
+    if(podeAbsorver){
+      state.absorveuEm = d; protegido = true;
+      anotar(`Nada Aconteceu: absorveu ${n} ${n===1?'cobrança':'cobranças'}`, 'bom');
+      toast('Nada aconteceu.', 'bom');
+    } else {
+      perder(40 * n, `${n} ${n===1?'meta venceu':'metas venceram'}`);
+      state.penalidades += n;
+      if(state.quem !== 'zoro' || state.rota < 4) state.sequencia = 0;
+      else state.sequencia = Math.max(0, state.sequencia - 3);
+      avisar('Penalidade', FALAS.penalidade(n), true);
+    }
+    vencidas.forEach(m => { m.vencida = true; });
+  }
+
+  /* A sequência CRESCE num lugar só: na primeira meta cumprida do dia, dentro de
+     virarMeta. Aqui ela apenas QUEBRA quando um dia passou em branco. Antes os dois
+     incrementavam e o dia seguinte a um dia produtivo contava em dobro.
+     Se Nada Aconteceu entrou em ação, nada é tocado neste tique. */
+  if(anterior && !protegido){
+    const gap = diasEntre(anterior, d);
+    const fezOntem = state.metas.some(m => m.feito && m.feitoEm === anterior);
+    if(gap >= 1 && !fezOntem){
+      if(state.quem === 'zoro' && state.rota >= 4) state.sequencia = Math.max(0, state.sequencia - 2);
+      else state.sequencia = 0;
+    }
+  }
+  salvar();
+}
+</script>
+<script>
+/* =====================================================================
+   INTERFACE
+   ===================================================================== */
+let aba = 'perfil';
+const $ = i => document.getElementById(i);
+
+function toast(txt, tipo){
+  try{
+    const c = $('toasts'); if(!c) return;
+    const d = document.createElement('div');
+    d.className = 'toast' + (tipo ? ' '+tipo : '');
+    d.textContent = txt; c.appendChild(d);
+    setTimeout(() => { try{ d.remove(); }catch(e){} }, 2600);
+  }catch(e){}
+}
+let filaAviso = [];
+function avisar(cabeca, texto, mau){
+  filaAviso.push({cabeca, texto, mau:!!mau});
+  if(!$('aviso').classList.contains('on')) proximoAviso();
+}
+function proximoAviso(){
+  const a = filaAviso.shift();
+  const cx = $('aviso');
+  if(!a){ cx.classList.remove('on'); return; }
+  $('avCb').textContent = a.cabeca;
+  $('avTt').textContent = a.mau ? 'Cobrança' : 'Mensagem do Fluxo';
+  $('avTx').textContent = a.texto;
+  cx.classList.toggle('mau', a.mau);
+  cx.classList.add('on');
+}
+function folha(html){ const s = $('sobreposicao'); s.innerHTML = html; s.classList.add('on'); }
+function fecharFolha(){ const s = $('sobreposicao'); s.classList.remove('on'); s.innerHTML = ''; }
+
+function aplicarTema(){
+  const p = EU();
+  const t = p ? TEMAS[p.tema] : null;
+  const r = document.documentElement, b = document.body;
+  if(!r || !r.style) return;
+  /* limpa o tema anterior antes de pintar o novo */
+  ['--void','--deep','--glass','--glass-hi','--edge','--ouro','--ouro-forte','--gelo','--mute']
+    .forEach(k => r.style.removeProperty(k));
+  let alvo = $('temaCss');
+  if(!alvo){ alvo = document.createElement('style'); alvo.id = 'temaCss'; document.head.appendChild(alvo); }
+  if(!t){ alvo.textContent = ''; $('fundo').style.background = ''; return; }
+  Object.entries(t.vars).forEach(([k,v]) => r.style.setProperty(k,v));
+  $('fundo').style.background = t.fundo;
+  alvo.textContent = t.css || '';
+  const mt = document.querySelector('meta[name="theme-color"]');
+  if(mt) mt.setAttribute('content', t.vars['--void']);
+}
+
+function renderTopo(){
+  const p = EU(); if(!p) return;
+  /* Todo desenho passa por aqui. Um elemento faltando não pode derrubar a tela
+     inteira — foi exatamente assim que o Sistema travou por semanas. */
+  if(!$('seloIc') || !$('selo') || !$('topoNome') || !$('topoXp')) return;
+  const rk = RANK(), pr = proxRank();
+  $('seloIc').textContent = p.icone;
+  $('selo').style.borderColor = p.cor;
+  $('selo').style.color = p.cor;
+  $('aura').style.background =
+    `radial-gradient(circle, ${p.cor}88 0%, transparent 68%)`;
+  $('topoNome').textContent = p.nome;
+  $('topoNome').style.color = p.cor;
+  $('topoSub').innerHTML = `${esc(rk.n)} · ${esc(ROTA().n)}`;
+  const base = rk.xp, teto = pr ? pr.xp : rk.xp + 1;
+  const pct = pr ? Math.max(0, Math.min(100, (state.xpTotal - base)/(teto - base)*100)) : 100;
+  const enche = $('topoXp').firstElementChild;
+  if(enche) enche.style.width = pct + '%';
+}
+
+/* ---------- aba: perfil ---------- */
+function vPerfil(){
+  const p = EU(), rk = RANK(), pr = proxRank(), pxr = proxRota();
+  const falta = pr ? pr.xp - state.xpTotal : 0;
+  const faltaRota = pxr ? pxr.xp - state.xpTotal : 0;
+  const obrasFeitas = state.obras.filter(o => o.status === 'concluida').length;
+  const metasFeitas = state.metas.filter(m => m.feito).length;
+
+  let extra = '';
+  if(state.quem === 'zoro')
+    extra = `<div class="item"><div class="corpo"><strong>Sequência · ${state.sequencia} ${state.sequencia===1?'dia':'dias'}</strong>
+      <div class="sub"><span>melhor: ${state.melhorSequencia}</span>
+      <span>multiplicador atual: ×${multiplicador().toFixed(2)}</span></div></div></div>`;
+  if(state.quem === 'ekko')
+    extra = `<div class="item"><div class="corpo"><strong>Cargas do Z-Drive · ${state.cargas}/${tetoCargas()}</strong>
+      <div class="sub"><span>${metasPorCarga() - (state.metasDesdeCarga % metasPorCarga())} meta(s) para a próxima</span></div></div></div>`;
+  if(state.quem === 'takaba')
+    extra = `<div class="item"><div class="corpo"><strong>Chance de virar piada · ${Math.round(chanceDePiada()*100)}%</strong>
+      <div class="sub"><span>toda tarefa pode render o dobro, às vezes o triplo</span></div></div></div>`;
+  if(state.quem === 'dokja')
+    extra = `<div class="item"><div class="corpo"><strong>Multiplicador fixo · ×${multiplicador().toFixed(2)}</strong>
+      <div class="sub"><span>${state.antecipadas.length} meta(s) antecipada(s)</span>
+      ${state.rota>=2?'<span>penalidade −40%</span>':''}</div></div></div>`;
+
+  return `
+  <h2 class="title">A constelação</h2>
+  <div class="painel">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="flex:1">
+        <div style="font-size:19px;font-weight:700;color:${p.cor}">${esc(p.constelacao)}</div>
+        <div class="lbl" style="margin-top:3px">${esc(p.nome)} · ${esc(p.real)}</div>
+      </div>
+      <span class="tag" style="color:${rk.cor};flex:0 0 auto">${esc(rk.n)}</span>
+    </div>
+    <div class="fala">${esc(p.lema)}</div>
+    <div class="lbl" style="margin-top:4px">${esc(p.classe)} · ${esc(p.obra)}</div>
+  </div>
+
+  <h2 class="title">Progresso</h2>
+  <div class="painel">
+    <div class="item"><div class="corpo"><strong>${esc(ROTA().n)}</strong>
+      <div class="sub"><span>${esc(ROTA().b)}</span></div></div></div>
+    ${pxr ? `<div class="item"><div class="corpo"><strong style="color:var(--mute)">Próximo · ${esc(pxr.n)}</strong>
+      <div class="sub"><span>faltam ${faltaRota} XP</span><span>${esc(pxr.b)}</span></div></div></div>`
+      : `<div class="item"><div class="corpo"><strong style="color:var(--ouro)">Fim da rota alcançado</strong>
+      <div class="sub"><span>não há mais degraus acima deste</span></div></div></div>`}
+    ${extra}
+    <div class="linha3" style="margin-top:12px;text-align:center">
+      <div><div class="num" style="font-size:19px;color:var(--ouro)">${state.xpTotal}</div><div class="lbl">XP total</div></div>
+      <div><div class="num" style="font-size:19px">${obrasFeitas}</div><div class="lbl">obras</div></div>
+      <div><div class="num" style="font-size:19px">${metasFeitas}</div><div class="lbl">metas</div></div>
+    </div>
+    ${pr ? `<div class="lbl" style="margin-top:12px;text-align:center;text-transform:none;letter-spacing:0">
+      Faltam <b style="color:${pr.cor}">${falta} XP</b> para ${esc(pr.n)}</div>` : ''}
+  </div>
+
+  <h2 class="title">Poder da classe</h2>
+  <div class="painel">
+    <div style="font-size:15px;font-weight:700;color:${p.cor};margin-bottom:4px">${esc(p.poder.n)}</div>
+    <div style="font-size:13.5px;line-height:1.7;color:var(--gelo)">${esc(p.poder.d)}</div>
+    <button class="btn" data-ac="usar-poder" style="margin-top:12px">Usar ${esc(p.poder.n)}</button>
+  </div>
+
+  <h2 class="title">A rota inteira</h2>
+  <div class="painel">
+    ${p.rota.map((e,i) => {
+      const aberto = i <= state.rota, atual = i === state.rota;
+      return `<div class="item">
+        <div class="check ${aberto?'feito':''}" style="${atual?`border-color:${p.cor};background:${p.cor};color:#0A0614`:''}">${aberto?'✓':i+1}</div>
+        <div class="corpo"><strong style="${aberto?'':'color:var(--mute)'}">${esc(e.n)}</strong>
+        <div class="sub"><span>${esc(e.b)}</span>${!aberto?`<span>${e.xp} XP</span>`:''}</div></div></div>`;
+    }).join('')}
+  </div>
+
+  <h2 class="title">Base</h2>
+  <div class="painel">
+    <div class="linha2" style="margin-bottom:8px">
+      <button class="btn fantasma" data-ac="exportar">Gerar código</button>
+      <button class="btn fantasma" data-ac="importar">Ler código</button>
+    </div>
+    <button class="btn fantasma" data-ac="instalar" id="btInstalar" hidden>Instalar como app</button>
+    <button class="btn ruim" data-ac="sair" style="margin-top:8px">Sair do conselho</button>
+    <div class="lbl" style="margin-top:10px;text-transform:none;letter-spacing:0;line-height:1.6">
+      Versão ${VERSAO}. Sair apaga tudo neste aparelho — gere um código antes.</div>
+  </div>`;
+}
+
+/* ---------- aba: conselho ---------- */
+function vConselho(){
+  const eu = EU();
+  const cartao = (k) => {
+    const p = PESSOAS[k], sou = k === state.quem;
+    const d = sou
+      ? {xpTotal:state.xpTotal, rota:state.rota, obras:state.obras.filter(o=>o.status==='concluida').length, quando:Date.now()}
+      : state.perfis[k];
+    const rk = d ? (() => { let r=RANKS[0]; for(const x of RANKS) if(d.xpTotal>=x.xp) r=x; return r; })() : null;
+    return `<div class="painel" style="border-color:${p.cor}55">
+      <div style="display:flex;gap:11px;align-items:flex-start">
+        <div style="width:40px;height:40px;flex:0 0 40px;border-radius:10px;border:1.5px solid ${p.cor};
+          color:${p.cor};display:flex;align-items:center;justify-content:center;font-size:19px;
+          background:${p.cor}14">${p.icone}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;color:${p.cor}">${esc(p.constelacao)}${sou?' · você':''}</div>
+          <div class="lbl" style="margin-top:2px">${esc(p.nome)} · ${esc(p.real)}</div>
+          ${d ? `<div class="sub" style="margin-top:5px">
+                  <span class="tag" style="color:${rk.cor}">${esc(rk.n)}</span>
+                  <span>${esc(p.rota[Math.min(d.rota,p.rota.length-1)].n)}</span></div>
+                <div class="sub" style="margin-top:3px"><span>${d.xpTotal} XP</span>
+                  <span>${d.obras} obra(s)</span>
+                  ${!sou?`<span>visto há ${Math.max(0,diasEntre(new Date(d.quando).toISOString().slice(0,10),hoje()))} dia(s)</span>`:''}</div>`
+             : `<div class="lbl" style="margin-top:5px;text-transform:none;letter-spacing:0;color:var(--mute)">
+                  Sem notícias. Peça o código dele e leia em Perfil › Ler código.</div>`}
+        </div>
+      </div>
+    </div>`;
+  };
+  return `
+  <h2 class="title">O conselho</h2>
+  <div class="fala">${esc(FALAS.vazio)}</div>
+  ${[state.quem, ...outros()].map(cartao).join('')}
+
+  <h2 class="title">Como os outros aparecem aqui</h2>
+  <div class="painel">
+    <div style="font-size:13.5px;line-height:1.75">
+      Cada aparelho guarda o próprio progresso. Para o conselho se enxergar,
+      alguém gera um código em <b>Perfil › Gerar código</b>, cola no grupo, e os outros
+      leem em <b>Ler código</b>. Dá para fazer isso uma vez por semana e já funciona.
+    </div>
+    <div class="lbl" style="margin-top:10px;text-transform:none;letter-spacing:0;line-height:1.6">
+      Se vocês quiserem que isso aconteça sozinho, sem código, dá para ligar um servidor depois —
+      o app já está preparado para isso.
+    </div>
+  </div>`;
+}
+
+/* ---------- aba: obras ---------- */
+const ROTULO = {pendente:'aguardando', aceita:'assistindo', concluida:'concluída', recusada:'recusada'};
+function vObras(){
+  const minhas  = state.obras.filter(o => o.para === state.quem);
+  const enviadas = state.obras.filter(o => o.de === state.quem);
+  const devendo = minhas.filter(o => o.status === 'pendente' || o.status === 'aceita').length;
+
+  const linha = (o, recebida) => {
+    const outro = PESSOAS[recebida ? o.de : o.para];
+    const cor = o.status==='concluida' ? 'var(--ok)'
+              : o.status==='recusada'  ? 'var(--ruim)'
+              : o.status==='aceita'    ? 'var(--ouro)' : 'var(--mute)';
+    return `<div class="item">
+      <div class="corpo">
+        <strong>${esc(o.titulo)}</strong>
+        <div class="sub">
+          <span class="tag" style="color:${cor}">${ROTULO[o.status]}</span>
+          <span>${recebida?'de':'para'} ${esc(outro ? outro.real : '—')}</span>
+          <span>${esc(o.tipo)}</span>
+        </div>
+        ${o.justificativa ? `<div class="lbl" style="margin-top:5px;text-transform:none;letter-spacing:0;
+          line-height:1.6;color:var(--ruim)">Recusa: ${esc(o.justificativa)}</div>` : ''}
+        ${o.nota ? `<div class="lbl" style="margin-top:5px;text-transform:none;letter-spacing:0;
+          line-height:1.6">Veredito: ${esc(o.nota)}</div>` : ''}
+        ${recebida && (o.status==='pendente'||o.status==='aceita') ? `
+          <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">
+            ${o.status==='pendente'?`<button class="btn mini solid" data-ac="aceitar" data-id="${o.id}">Aceitar</button>`:''}
+            <button class="btn mini" data-ac="concluir" data-id="${o.id}">Concluí</button>
+            <button class="btn mini ruim" data-ac="recusar" data-id="${o.id}">Recusar</button>
+          </div>` : ''}
+      </div>
+    </div>`;
+  };
+
+  return `
+  <h2 class="title">Indicadas para você${devendo?` · ${devendo} em aberto`:''}</h2>
+  <div class="painel">
+    ${minhas.length ? minhas.map(o => linha(o,true)).join('')
+      : `<div class="vazio">Ninguém te indicou nada ainda.<br>O conselho está quieto demais.</div>`}
+  </div>
+
+  <h2 class="title">Suas indicações</h2>
+  <div class="painel">
+    ${enviadas.length ? enviadas.map(o => linha(o,false)).join('')
+      : `<div class="vazio">Você ainda não indicou nada a ninguém.</div>`}
+    <button class="btn solid" data-ac="indicar" style="margin-top:12px">Indicar uma obra</button>
+  </div>
+
+  <h2 class="title">A regra da troca</h2>
+  <div class="painel">
+    <div style="font-size:13.5px;line-height:1.75">
+      Indicar é oferecer, não mandar. Quem recebe pode <b>recusar com justificativa</b> —
+      e se o motivo for adaptação ruim, a obra vale pelo material original.
+      Toda indicação feita espera contrapartida: você assiste o que te indicaram.
+    </div>
+    <div class="lbl" style="margin-top:10px;text-transform:none;letter-spacing:0;line-height:1.6">
+      Concluir uma obra rende <b>120 XP</b>, já com o bônus da sua classe.
+      Recusar não tira nada — justificar é parte do jogo.
+    </div>
+  </div>`;
+}
+
+/* ---------- aba: metas ---------- */
+function vMetas(){
+  const d = hoje();
+  const abertas = state.metas.filter(m => !m.feito);
+  const feitas  = state.metas.filter(m => m.feito).slice(0,14);
+  const hojeFeitas = state.metas.filter(m => m.feito && m.feitoEm === d).length;
+
+  const linha = m => {
+    const venceu = !m.feito && m.prazo && m.prazo < d;
+    const hj = m.prazo === d;
+    return `<div class="item">
+      <div class="check ${m.feito?'feito':''}" data-ac="virar-meta" data-id="${m.id}">${m.feito?'✓':''}</div>
+      <div class="corpo">
+        <strong style="${m.feito?'opacity:.55;text-decoration:line-through':''}">${esc(m.texto)}</strong>
+        <div class="sub">
+          <span>${m.valor} XP</span>
+          ${m.prazo?`<span style="${venceu?'color:var(--ruim)':hj?'color:var(--ouro)':''}">${venceu?'venceu':hj?'hoje':'até '+esc(m.prazo)}</span>`:''}
+          ${m.antecipada?`<span style="color:var(--ouro)">antecipada</span>`:''}
+          ${m.desafio?`<span class="tag" style="color:var(--ouro)">desafio</span>`:''}
+        </div>
+      </div>
+      <button class="btn mini fantasma" data-ac="apagar-meta" data-id="${m.id}"
+        style="padding:4px 8px">✕</button>
+    </div>`;
+  };
+
+  return `
+  <h2 class="title">Em aberto · ${abertas.length}</h2>
+  <div class="painel">
+    ${abertas.length ? abertas.map(linha).join('')
+      : `<div class="vazio">Nada em aberto.<br>Ou você está em dia, ou não prometeu nada.</div>`}
+    <div class="linha2" style="margin-top:12px">
+      <button class="btn solid" data-ac="nova-meta">Nova meta</button>
+      <button class="btn" data-ac="novo-desafio">Desafio do grupo</button>
+    </div>
+  </div>
+
+  <h2 class="title">Hoje</h2>
+  <div class="painel">
+    <div class="linha3" style="text-align:center">
+      <div><div class="num" style="font-size:19px;color:var(--ouro)">${hojeFeitas}</div><div class="lbl">cumpridas</div></div>
+      <div><div class="num" style="font-size:19px">${state.sequencia}</div><div class="lbl">sequência</div></div>
+      <div><div class="num" style="font-size:19px">×${multiplicador().toFixed(2)}</div><div class="lbl">multiplicador</div></div>
+    </div>
+    ${state.quem==='zoro' && state.sequencia>0 ? `<div class="fala" style="margin-bottom:0">
+      Cada dia seguido aumenta o que você ganha. Quebrar a sequência custa mais do que um dia.</div>`:''}
+  </div>
+
+  ${feitas.length ? `<h2 class="title">Cumpridas</h2>
+  <div class="painel">${feitas.map(linha).join('')}</div>` : ''}`;
+}
+
+/* ---------- aba: registro ---------- */
+function vRegistro(){
+  const r = state.registro;
+  return `
+  <h2 class="title">Registro · ${r.length}</h2>
+  <div class="painel">
+    ${r.length ? r.slice(0,90).map(x => {
+      const q = new Date(x.q);
+      const cor = x.tipo==='bom' ? 'var(--ok)' : x.tipo==='mau' ? 'var(--ruim)' : 'var(--mute)';
+      return `<div class="item"><div class="corpo">
+        <div style="font-size:13px;color:${cor}">${esc(x.t)}</div>
+        <div class="sub"><span>${String(q.getDate()).padStart(2,'0')}/${String(q.getMonth()+1).padStart(2,'0')}
+          ${String(q.getHours()).padStart(2,'0')}:${String(q.getMinutes()).padStart(2,'0')}</span></div>
+      </div></div>`;
+    }).join('') : `<div class="vazio">Nada registrado ainda.</div>`}
+  </div>
+  ${state.penalidades ? `<h2 class="title">Cobranças</h2>
+  <div class="painel"><div style="font-size:13.5px;line-height:1.7">
+    Você levou <b style="color:var(--ruim)">${state.penalidades}</b> cobrança(s) até aqui.
+    ${state.quem==='takaba'?'Dá para transformar uma em XP: use Isso Foi Engraçado no Perfil.':''}
+    ${state.quem==='ekko'?'Dá para rebobinar uma: use o Z-Drive no Perfil.':''}
+  </div></div>` : ''}`;
+}
+
+const VISTAS = {perfil:vPerfil, conselho:vConselho, obras:vObras, metas:vMetas, registro:vRegistro};
+
+function desenhar(){
+  if(!state.quem){ telaDeEntrada(); return; }
+  $('topo').hidden = false; $('abas').hidden = false;
+  aplicarTema(); renderTopo();
+  $('tela').innerHTML = VISTAS[aba]();
+  document.querySelectorAll('#abas button').forEach(b => {
+    b.classList.toggle('on', b.dataset.aba === aba);
+    const antigo = b.querySelector('.ponto'); if(antigo) antigo.remove();
+  });
+  const emAberto = state.obras.filter(o => o.para === state.quem && o.status === 'pendente').length;
+  if(emAberto){
+    const bt = document.querySelector('#abas button[data-aba="obras"]');
+    if(bt){ const p = document.createElement('span'); p.className = 'ponto'; bt.appendChild(p); }
+  }
+  const bi = $('btInstalar');
+  if(bi && promptInstalar) bi.hidden = false;
+}
+const atualizar = () => { salvar(); desenhar(); };
+</script>
+<script>
+/* =====================================================================
+   ENTRADA — a senha diz quem você é, e isso não muda mais
+   ===================================================================== */
+function telaDeEntrada(){
+  $('topo').hidden = true; $('abas').hidden = true;
+  aplicarTema();
+  $('tela').innerHTML = `
+  <div style="padding-top:calc(26px + env(safe-area-inset-top))">
+    <div style="text-align:center;margin-bottom:22px">
+      <div style="font-size:11px;letter-spacing:.44em;text-transform:uppercase;color:var(--ouro)">Conselho</div>
+      <div style="font-size:23px;font-weight:700;margin-top:6px">Classes Narrativas</div>
+    </div>
+
+    <div class="fala">「A constelação 'O Sonho Mais Antigo' abre o conselho.
+
+    Quatro assentos foram preparados. Cada um responde a um nome que só seu dono conhece.
+
+    Diga o seu.」</div>
+
+    <div class="painel" style="margin-top:18px">
+      <label class="campo"><span class="lbl">Senha da sua constelação</span>
+        <input id="inSenha" type="password" autocomplete="off" autocapitalize="off"
+          spellcheck="false" placeholder="…"></label>
+      <button class="btn solid" data-ac="entrar">Tomar assento</button>
+      <div class="lbl" style="margin-top:11px;text-transform:none;letter-spacing:0;line-height:1.6">
+        A classe que a senha abrir é sua para sempre. Não há troca depois.</div>
+    </div>
+
+    <div class="painel" style="margin-top:10px">
+      <div class="lbl" style="margin-bottom:8px">Os quatro assentos</div>
+      ${Object.values(PESSOAS).map(p => `<div class="item">
+        <div style="width:30px;height:30px;flex:0 0 30px;border-radius:8px;border:1px solid ${p.cor}66;
+          color:${p.cor};display:flex;align-items:center;justify-content:center;font-size:15px">${p.icone}</div>
+        <div class="corpo"><strong style="color:${p.cor}">${esc(p.constelacao)}</strong>
+        <div class="sub"><span>${esc(p.real)}</span><span>${esc(p.classe)}</span></div></div>
+      </div>`).join('')}
+    </div>
+
+    <div style="margin-top:10px">
+      <button class="btn fantasma" data-ac="instalar" id="btInstalar" hidden>Instalar como app</button>
+      <button class="btn fantasma" data-ac="importar" style="margin-top:8px">Tenho um código de retorno</button>
+    </div>
+  </div>`;
+  const bi = $('btInstalar');
+  if(bi && promptInstalar) bi.hidden = false;
+}
+
+function entrar(){
+  const v = limpo(($('inSenha')||{}).value);
+  if(!v){ toast('Diga alguma coisa', 'mau'); return; }
+  const k = Object.keys(PESSOAS).find(k => limpo(PESSOAS[k].senha) === v);
+  if(!k){
+    toast('Nenhum assento responde a esse nome', 'mau');
+    const c = $('inSenha'); if(c){ c.value = ''; c.focus(); }
+    return;
+  }
+  const p = PESSOAS[k];
+  state.quem = k; state.entrou = hoje(); state.ultimoDia = hoje();
+  state.rankVisto = RANKS[0].n;
+  anotar(`${p.constelacao} tomou assento`, 'bom');
+  salvar();
+  aplicarTema(); desenhar();
+  avisar('Conselho', FALAS.entrou(p));
+}
+
+/* =====================================================================
+   AÇÕES
+   ===================================================================== */
+function formObra(){
+  folha(`<div class="folha">
+    <h3>Indicar uma obra</h3>
+    <label class="campo"><span class="lbl">Para quem</span>
+      <select id="obPara">${outros().map(k =>
+        `<option value="${k}">${esc(PESSOAS[k].real)} · ${esc(PESSOAS[k].constelacao)}</option>`).join('')}
+        <option value="todos">O conselho inteiro</option></select></label>
+    <label class="campo"><span class="lbl">Título</span>
+      <input id="obTit" placeholder="nome da obra" autocapitalize="words"></label>
+    <label class="campo"><span class="lbl">Tipo</span>
+      <select id="obTipo"><option>Anime</option><option>Mangá</option>
+        <option>Manhwa</option><option>Filme</option><option>Novel</option></select></label>
+    <label class="campo"><span class="lbl">Por que esta (opcional)</span>
+      <textarea id="obPor" placeholder="o que você quer que a pessoa veja nela"></textarea></label>
+    <button class="btn solid" data-ac="salvar-obra">Indicar</button>
+    <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Cancelar</button>
+  </div>`);
+}
+function salvarObra(){
+  const t = ($('obTit')||{}).value || '';
+  if(!t.trim()){ toast('Falta o título', 'mau'); return; }
+  const para = ($('obPara')||{}).value, tipo = ($('obTipo')||{}).value || 'Anime';
+  const por = (($('obPor')||{}).value || '').trim();
+  const alvos = para === 'todos' ? outros() : [para];
+  alvos.forEach(k => state.obras.unshift({
+    id:id(), titulo:t.trim(), tipo, de:state.quem, para:k,
+    porque:por, status:'pendente', quando:Date.now()
+  }));
+  anotar(`Indicou "${t.trim()}" a ${alvos.map(k=>PESSOAS[k].real).join(', ')}`, '');
+  fecharFolha(); atualizar();
+  avisar('Troca', FALAS.indicou(EU().constelacao,
+    alvos.map(k=>PESSOAS[k].constelacao).join(' e '), t.trim()));
+}
+function formRecusa(oid){
+  const o = state.obras.find(x => x.id === oid); if(!o) return;
+  folha(`<div class="folha">
+    <h3>Recusar "${esc(o.titulo)}"</h3>
+    <div class="lbl" style="margin-bottom:11px;text-transform:none;letter-spacing:0;line-height:1.6">
+      Recusar não tira XP. Mas o conselho pede o motivo — e se for adaptação ruim,
+      marque abaixo: a obra passa a valer pelo material original.</div>
+    <label class="campo"><span class="lbl">Justificativa</span>
+      <textarea id="rcJust" placeholder="por que não vai acompanhar"></textarea></label>
+    <label style="display:flex;gap:9px;align-items:center;margin-bottom:14px;font-size:13.5px">
+      <input type="checkbox" id="rcAdapt" style="width:19px;height:19px;flex:0 0 19px">
+      <span>O problema é a adaptação — aceito pelo mangá ou manhwa</span></label>
+    <button class="btn ruim" data-ac="salvar-recusa" data-id="${oid}">Recusar</button>
+    <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Voltar</button>
+  </div>`);
+}
+function salvarRecusa(oid){
+  const o = state.obras.find(x => x.id === oid); if(!o) return;
+  const j = (($('rcJust')||{}).value || '').trim();
+  if(!j){ toast('O conselho pede o motivo', 'mau'); return; }
+  const adapt = (($('rcAdapt')||{}).checked);
+  if(adapt){
+    o.status = 'aceita'; o.tipo = 'Mangá'; o.justificativa = j + ' — aceito pelo material original';
+    anotar(`Recusou a adaptação de "${o.titulo}", segue pelo original`, '');
+    toast('Trocado pelo material original', 'bom');
+  } else {
+    o.status = 'recusada'; o.justificativa = j;
+    anotar(`Recusou "${o.titulo}"`, '');
+    avisar('Recusa', FALAS.recusou(EU().constelacao, o.titulo, j));
+  }
+  fecharFolha(); atualizar();
+}
+function formConcluir(oid){
+  const o = state.obras.find(x => x.id === oid); if(!o) return;
+  folha(`<div class="folha">
+    <h3>Concluí "${esc(o.titulo)}"</h3>
+    <div class="lbl" style="margin-bottom:11px;text-transform:none;letter-spacing:0;line-height:1.6">
+      Vale 120 XP, com o bônus da sua classe por cima.</div>
+    <label class="campo"><span class="lbl">Veredito (vai para quem indicou)</span>
+      <textarea id="cnNota" placeholder="o que achou"></textarea></label>
+    <button class="btn solid" data-ac="salvar-conclusao" data-id="${oid}">Registrar</button>
+    <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Voltar</button>
+  </div>`);
+}
+function salvarConclusao(oid){
+  const o = state.obras.find(x => x.id === oid); if(!o) return;
+  o.status = 'concluida'; o.nota = (($('cnNota')||{}).value || '').trim();
+  o.concluidaEm = hoje();
+  ganhar(120, `Concluiu "${o.titulo}"`);
+  fecharFolha(); atualizar();
+  avisar('Troca', FALAS.concluiu(EU().constelacao, o.titulo));
+}
+
+function formMeta(desafio){
+  folha(`<div class="folha">
+    <h3>${desafio?'Desafio do grupo':'Nova meta'}</h3>
+    ${desafio?`<div class="lbl" style="margin-bottom:11px;text-transform:none;letter-spacing:0;line-height:1.6">
+      Desafio vale o dobro e é combinado no grupo. Cada um cria o seu.</div>`:''}
+    <label class="campo"><span class="lbl">O que você promete</span>
+      <input id="mtTxt" placeholder="${desafio?'ex: uma semana sem rolar o feed de manhã':'ex: treinar 30 min'}"></label>
+    <label class="campo"><span class="lbl">Prazo (opcional — sem prazo não cobra)</span>
+      <input id="mtPrazo" type="date" value=""></label>
+    <label class="campo"><span class="lbl">Peso</span>
+      <select id="mtPeso">
+        <option value="30">Leve · 30 XP</option>
+        <option value="60" selected>Normal · 60 XP</option>
+        <option value="110">Pesada · 110 XP</option>
+      </select></label>
+    ${state.quem==='dokja'?`<label style="display:flex;gap:9px;align-items:center;margin-bottom:14px;font-size:13.5px">
+      <input type="checkbox" id="mtAnt" style="width:19px;height:19px;flex:0 0 19px">
+      <span>Ler Adiante — 40% do XP agora, cobrança dobrada se falhar</span></label>`:''}
+    <button class="btn solid" data-ac="salvar-meta" data-d="${desafio?1:0}">Prometer</button>
+    <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Cancelar</button>
+  </div>`);
+}
+function salvarMeta(desafio){
+  const t = (($('mtTxt')||{}).value || '').trim();
+  if(!t){ toast('Escreva a meta', 'mau'); return; }
+  const peso = +(($('mtPeso')||{}).value || 60);
+  const valor = desafio ? peso*2 : peso;
+  const prazo = (($('mtPrazo')||{}).value || '') || null;
+  const ant = !!(($('mtAnt')||{}).checked);
+  const m = {id:id(), texto:t, valor, prazo, desafio:!!desafio, feito:false, criada:Date.now()};
+  if(ant){
+    m.antecipada = true;
+    state.antecipadas.push(m.id);
+    const adianta = Math.round(valor * 0.4);
+    state.xp += adianta; state.xpTotal += adianta;
+    anotar(`Leu adiante "${t}" · +${adianta} XP adiantado`, 'bom');
+    toast(`+${adianta} XP adiantado`, 'bom');
+  }
+  state.metas.unshift(m);
+  anotar(`${desafio?'Desafio':'Meta'} assumida: ${t}`, '');
+  fecharFolha(); atualizar();
+}
+function virarMeta(mid){
+  const m = state.metas.find(x => x.id === mid); if(!m) return;
+  if(m.feito){
+    m.feito = false; m.feitoEm = null;
+    perder(Math.round(m.valor*0.5), `Desfez "${m.texto}"`);
+    atualizar(); return;
+  }
+  m.feito = true; m.feitoEm = hoje();
+  const base = m.antecipada ? Math.round(m.valor*0.6) : m.valor;
+  ganhar(base, `Cumpriu "${m.texto}"`);
+  if(state.quem === 'ekko'){
+    state.metasDesdeCarga++;
+    if(state.metasDesdeCarga % metasPorCarga() === 0 && state.cargas < tetoCargas()){
+      state.cargas++;
+      toast(`Z-Drive carregado · ${state.cargas}/${tetoCargas()}`, 'bom');
+      anotar(`Carga do Z-Drive acumulada (${state.cargas})`, 'bom');
+    }
+  }
+  if(!state.metas.some(x => x.feito && x.feitoEm === hoje() && x.id !== m.id)) state.sequencia++;
+  if(state.sequencia > state.melhorSequencia) state.melhorSequencia = state.sequencia;
+  atualizar();
+}
+
+/* poderes de classe */
+function usarPoder(){
+  const p = EU(); if(!p) return;
+  if(state.quem === 'dokja'){
+    folha(`<div class="folha"><h3>Ler Adiante</h3>
+      <div style="font-size:13.5px;line-height:1.75;margin-bottom:14px">
+        Marque a caixa <b>Ler Adiante</b> ao criar uma meta nova. Você recebe 40% do XP
+        na hora; se o prazo passar sem cumprir, a cobrança vem dobrada.</div>
+      <button class="btn solid" data-ac="nova-meta">Criar meta antecipada</button>
+      <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Fechar</button></div>`);
+    return;
+  }
+  if(state.quem === 'zoro'){
+    const pronto = !state.absorveuEm || diasEntre(state.absorveuEm, hoje()) >= 7;
+    folha(`<div class="folha"><h3>Nada Aconteceu</h3>
+      <div style="font-size:13.5px;line-height:1.75;margin-bottom:14px">
+        ${pronto ? 'Está pronto. A próxima cobrança que chegar é absorvida sozinha — você não perde XP nem sequência.'
+                 : `Usado há ${diasEntre(state.absorveuEm, hoje())} dia(s). Recarrega em ${7-diasEntre(state.absorveuEm,hoje())}.`}</div>
+      <button class="btn fantasma" data-ac="fechar">Fechar</button></div>`);
+    return;
+  }
+  if(state.quem === 'takaba'){
+    folha(`<div class="folha"><h3>Isso Foi Engraçado</h3>
+      <div style="font-size:13.5px;line-height:1.75;margin-bottom:12px">
+        Escreva uma piada sobre alguma cobrança que você levou. Se arrancar riso, vira XP.</div>
+      <label class="campo"><span class="lbl">A piada</span>
+        <textarea id="tkPiada" placeholder="conte aí"></textarea></label>
+      <button class="btn solid" data-ac="salvar-piada">Contar</button>
+      <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Fechar</button></div>`);
+    return;
+  }
+  if(state.quem === 'ekko'){
+    folha(`<div class="folha"><h3>Z-Drive</h3>
+      <div style="font-size:13.5px;line-height:1.75;margin-bottom:14px">
+        Cargas: <b style="color:var(--ouro)">${state.cargas}/${tetoCargas()}</b>.
+        Gastar uma devolve o XP da última cobrança e restaura a sequência.</div>
+      <button class="btn solid" data-ac="rebobinar" ${state.cargas?'':'disabled'}>
+        ${state.cargas?'Rebobinar':'Sem carga'}</button>
+      <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Fechar</button></div>`);
+  }
+}
+function salvarPiada(){
+  const t = (($('tkPiada')||{}).value || '').trim();
+  if(t.length < 8){ toast('Isso não foi engraçado', 'mau'); return; }
+  if(!state.penalidades){ toast('Você não tem cobrança nenhuma pra rir', 'mau'); return; }
+  state.penalidades--;
+  const v = state.rota >= 2 ? 160 : 80;
+  ganhar(v, `Riu da própria cobrança: "${t.slice(0,40)}"`);
+  fecharFolha(); atualizar();
+  avisar('Comédia', `「A piada foi considerada.\n\n"${t}"\n\nO Fluxo de Estrelas achou graça. `
+    + `A cobrança foi anulada.」`);
+}
+function rebobinar(){
+  if(!state.cargas){ toast('Sem carga', 'mau'); return; }
+  state.cargas--;
+  if(state.penalidades) state.penalidades--;
+  state.sequencia = Math.max(state.sequencia, state.melhorSequencia);
+  ganhar(100, 'Rebobinou o tempo');
+  state.metas.forEach(m => { if(m.vencida){ m.vencida = false; m.prazo = hoje(); } });
+  fecharFolha(); atualizar();
+  avisar('Z-Drive', `「O tempo recuou.\n\nA cobrança não existiu. A sequência voltou ao que era.\n\n`
+    + `Errou. Volta. Erra melhor.」`);
+}
+
+/* código de troca — o conselho se enxerga sem servidor */
+function exportar(){
+  const p = {
+    k:state.quem, xpTotal:state.xpTotal, rota:state.rota,
+    obras:state.obras.filter(o=>o.status==='concluida').length, quando:Date.now()
+  };
+  let cod = '';
+  try{ cod = 'CNS1.' + btoa(unescape(encodeURIComponent(JSON.stringify(p)))); }
+  catch(e){ toast('Não deu para gerar', 'mau'); return; }
+  folha(`<div class="folha"><h3>Código da sua constelação</h3>
+    <div class="lbl" style="margin-bottom:11px;text-transform:none;letter-spacing:0;line-height:1.6">
+      Cole no grupo. Quem ler vê seu rank e progresso no Conselho.</div>
+    <textarea id="exCod" readonly style="font-family:monospace;font-size:11px;min-height:96px">${esc(cod)}</textarea>
+    <button class="btn solid" data-ac="copiar" style="margin-top:10px">Copiar</button>
+    <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Fechar</button></div>`);
+  setTimeout(() => { const c = $('exCod'); if(c){ c.focus(); c.select(); } }, 120);
+}
+function copiar(){
+  const c = $('exCod'); if(!c) return;
+  try{ c.select(); navigator.clipboard.writeText(c.value); toast('Copiado', 'bom'); }
+  catch(e){ toast('Selecione e copie à mão', 'mau'); }
+}
+function importar(){
+  folha(`<div class="folha"><h3>Ler código</h3>
+    <div class="lbl" style="margin-bottom:11px;text-transform:none;letter-spacing:0;line-height:1.6">
+      Cole o código que alguém mandou no grupo.</div>
+    <textarea id="imCod" placeholder="CNS1…" style="font-family:monospace;font-size:11px"></textarea>
+    <button class="btn solid" data-ac="salvar-import" style="margin-top:10px">Ler</button>
+    <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Fechar</button></div>`);
+}
+function salvarImport(){
+  const v = (($('imCod')||{}).value || '').trim();
+  if(!v.startsWith('CNS1.')){ toast('Esse código não é daqui', 'mau'); return; }
+  let p;
+  try{ p = JSON.parse(decodeURIComponent(escape(atob(v.slice(5))))); }
+  catch(e){ toast('Código corrompido', 'mau'); return; }
+  if(!p || !p.k || !PESSOAS[p.k]){ toast('Código corrompido', 'mau'); return; }
+  if(p.k === state.quem){ toast('Esse código é o seu', 'mau'); return; }
+  state.perfis[p.k] = {xpTotal:+p.xpTotal||0, rota:+p.rota||0, obras:+p.obras||0, quando:+p.quando||Date.now()};
+  anotar(`Leu notícias de ${PESSOAS[p.k].constelacao}`, '');
+  fecharFolha(); aba = 'conselho'; atualizar();
+  toast(`${PESSOAS[p.k].real} atualizado`, 'bom');
+}
+
+/* instalar como app */
+let promptInstalar = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); promptInstalar = e;
+  try{ desenhar(); }catch(x){}
+});
+window.addEventListener('appinstalled', () => { promptInstalar = null; toast('Instalado', 'bom'); });
+async function instalar(){
+  if(!promptInstalar){ toast('Use o menu do navegador › Instalar app', 'mau'); return; }
+  const p = promptInstalar; promptInstalar = null;
+  try{
+    p.prompt();
+    const r = await p.userChoice;
+    if(!r || r.outcome !== 'accepted') promptInstalar = p;
+    else toast('Instalando…', 'bom');
+  }catch(e){ promptInstalar = p; }
+  try{ desenhar(); }catch(e){}
+}
+
+/* =====================================================================
+   EVENTOS
+   ===================================================================== */
+const ACOES = {
+  entrar, 'usar-poder':usarPoder, 'salvar-piada':salvarPiada, rebobinar,
+  indicar:formObra, 'salvar-obra':salvarObra,
+  'nova-meta':()=>formMeta(false), 'novo-desafio':()=>formMeta(true),
+  exportar, importar, copiar, 'salvar-import':salvarImport, instalar,
+  fechar:fecharFolha,
+  aceitar(e,el){
+    const o = state.obras.find(x => x.id === el.dataset.id); if(!o) return;
+    o.status = 'aceita'; anotar(`Aceitou "${o.titulo}"`, ''); atualizar();
+    toast('Boa sorte.', 'bom');
+  },
+  recusar(e,el){ formRecusa(el.dataset.id); },
+  'salvar-recusa'(e,el){ salvarRecusa(el.dataset.id); },
+  concluir(e,el){ formConcluir(el.dataset.id); },
+  'salvar-conclusao'(e,el){ salvarConclusao(el.dataset.id); },
+  'salvar-meta'(e,el){ salvarMeta(el.dataset.d === '1'); },
+  'virar-meta'(e,el){ virarMeta(el.dataset.id); },
+  'apagar-meta'(e,el){
+    const i = state.metas.findIndex(x => x.id === el.dataset.id);
+    if(i < 0) return;
+    const m = state.metas[i];
+    if(m.feito){ toast('Já cumprida — fica no histórico', 'mau'); return; }
+    state.metas.splice(i,1); anotar(`Desistiu de "${m.texto}"`, 'mau'); atualizar();
+  },
+  sair(){
+    folha(`<div class="folha"><h3>Sair do conselho</h3>
+      <div style="font-size:13.5px;line-height:1.75;margin-bottom:14px">
+        Isto apaga tudo deste aparelho: classe, XP, metas e obras.
+        Não dá para desfazer. Gere um código antes se quiser guardar alguma coisa.</div>
+      <button class="btn ruim" data-ac="sair-mesmo">Apagar e sair</button>
+      <button class="btn fantasma" data-ac="fechar" style="margin-top:8px">Voltar</button></div>`);
+  },
+  'sair-mesmo'(){
+    try{ localStorage.removeItem(CHAVE); }catch(e){}
+    state = inicial(); fecharFolha(); aba = 'perfil';
+    aplicarTema(); desenhar();
+    toast('O assento foi desocupado');
+  }
+};
+
+document.addEventListener('click', ev => {
+  const el = ev.target.closest('[data-ac]');
+  if(el){
+    const f = ACOES[el.dataset.ac];
+    if(f){ ev.preventDefault(); f(ev, el); }
+    return;
+  }
+  const t = ev.target.closest('#abas button');
+  if(t && t.dataset.aba){ aba = t.dataset.aba; desenhar(); return; }
+  if(ev.target.id === 'sobreposicao') fecharFolha();
+  if(ev.target.id === 'avOk' || ev.target.closest('#avOk')) proximoAviso();
+});
+document.addEventListener('keydown', ev => {
+  if(ev.key === 'Enter' && ev.target.id === 'inSenha'){ ev.preventDefault(); entrar(); }
+});
+window.addEventListener('focus', () => {
+  if(state.quem){ virarDia(); desenhar(); }
+});
+
+/* =====================================================================
+   REDE DE SEGURANÇA + BOOT
+   Mesma lição da 3.8.1 do Sistema: a capa sai por CSS, o boot vive dentro
+   de um try/catch e um cão de guarda abre a tela de resgate se travar.
+   ===================================================================== */
+let bootOk = false, resgateAberto = false;
+function tirarCapa(){ try{ const c = $('capa'); if(c) c.className = 'sai'; }catch(e){} }
+
+function telaDeResgate(motivo){
+  if(bootOk || resgateAberto) return;
+  resgateAberto = true;
+  try{
+    tirarCapa();
+    const d = document.createElement('div');
+    d.setAttribute('style','position:fixed;inset:0;z-index:999;overflow:auto;background:#0A0618;'
+      + 'color:#EDE6FF;font-family:system-ui,sans-serif;padding:28px 20px;line-height:1.6');
+    const bt = 'display:block;width:100%;padding:14px;margin-bottom:10px;border-radius:10px;'
+      + 'border:1px solid rgba(255,206,122,.4);background:rgba(255,206,122,.1);color:#EDE6FF;'
+      + 'font-size:15px;font-family:inherit';
+    d.innerHTML = '<div style="max-width:440px;margin:0 auto">'
+      + '<div style="letter-spacing:.3em;font-size:11px;color:#FFCE7A;text-transform:uppercase">Conselho</div>'
+      + '<h2 style="margin:6px 0 14px;font-size:20px">O cenário não terminou de abrir</h2>'
+      + '<p style="font-size:14px;color:#8C7FA8;margin:0 0 6px">Motivo: '
+      + String(motivo||'desconhecido').slice(0,300) + '</p>'
+      + '<p style="font-size:14px;color:#8C7FA8;margin:0 0 18px">Seu progresso não foi apagado.</p>'
+      + '<button id="rgB" style="'+bt+'">1 · Copiar meu progresso</button>'
+      + '<textarea id="rgT" readonly style="display:none;width:100%;height:110px;margin-bottom:10px;'
+      + 'background:#050310;color:#8C7FA8;border:1px solid rgba(140,127,168,.3);border-radius:8px;'
+      + 'padding:8px;font-size:11px;font-family:monospace"></textarea>'
+      + '<button id="rgR" style="'+bt+'">2 · Religar (limpa o cache, mantém o progresso)</button>'
+      + '<button id="rgS" style="'+bt+'">3 · Abrir mesmo assim</button></div>';
+    document.body.appendChild(d);
+    const b = document.getElementById('rgB');
+    if(b) b.onclick = () => {
+      let txt = ''; try{ txt = localStorage.getItem(CHAVE) || ''; }catch(e){}
+      if(!txt){ b.textContent = 'Nada salvo neste aparelho'; return; }
+      const ta = document.getElementById('rgT');
+      if(ta){ ta.style.display = 'block'; ta.value = txt; ta.select(); }
+      try{ navigator.clipboard.writeText(txt); }catch(e){}
+      b.textContent = '✓ Copiado';
+    };
+    const r = document.getElementById('rgR');
+    if(r) r.onclick = async () => {
+      r.textContent = 'Religando…';
+      try{ if('caches' in window){ const k = await caches.keys(); await Promise.all(k.map(x=>caches.delete(x))); } }catch(e){}
+      try{ if(navigator.serviceWorker){ const g = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(g.map(x=>x.unregister())); } }catch(e){}
+      location.replace(location.href.split('#')[0].split('?')[0] + '?v=' + Date.now());
+    };
+    const s = document.getElementById('rgS');
+    if(s) s.onclick = () => { try{ d.remove(); }catch(e){} };
+  }catch(e){ tirarCapa(); }
+}
+
+(function(){
+  const guarda = setTimeout(() => telaDeResgate('o carregamento travou no meio'), 9000);
+  try{
+    const salvo = Guardar.ler();
+    if(salvo) state = Object.assign(inicial(), salvo);
+    if(state.quem && !PESSOAS[state.quem]) state.quem = null;   // assento que sumiu
+    if(!Array.isArray(state.metas))    state.metas = [];
+    if(!Array.isArray(state.obras))    state.obras = [];
+    if(!Array.isArray(state.registro)) state.registro = [];
+    if(!state.perfis || typeof state.perfis !== 'object' || Array.isArray(state.perfis)) state.perfis = {};
+    /* números fora da casinha não podem virar NaN mais adiante */
+    state.xp       = Math.max(0, +state.xp || 0);
+    state.xpTotal  = Math.max(0, +state.xpTotal || 0);
+    state.rota     = Math.max(0, Math.min(4, +state.rota || 0));
+    state.sequencia= Math.max(0, +state.sequencia || 0);
+    state.cargas   = Math.max(0, +state.cargas || 0);
+    if(state.quem) virarDia();
+    desenhar();
+    try{ if(location.search.indexOf('v=') > -1 && history.replaceState)
+      history.replaceState(null,'',location.pathname); }catch(e){}
+    bootOk = true;
+    clearTimeout(guarda);
+    setTimeout(tirarCapa, 900);
+  }catch(e){
+    clearTimeout(guarda);
+    telaDeResgate((e && e.message) ? e.message : String(e));
+  }
+})();
+
+if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
